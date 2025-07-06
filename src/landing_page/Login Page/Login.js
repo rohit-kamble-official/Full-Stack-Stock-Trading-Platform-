@@ -1,9 +1,7 @@
 import { useState } from "react";
 
-export default function AuthPage() {
-  const [isSignup, setIsSignup] = useState(true);
+export default function LoginPage() {
   const [formData, setFormData] = useState({
-    name: "",
     email: "",
     password: "",
   });
@@ -15,28 +13,20 @@ export default function AuthPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const url = isSignup
-      ? "http://localhost:3002/signup"
-      : "http://localhost:3002/login";
-
-    const payload = isSignup
-      ? formData
-      : { email: formData.email, password: formData.password };
-
     try {
-      const res = await fetch(url, {
+      const res = await fetch("http://localhost:3002/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(formData),
       });
 
       const data = await res.json();
 
       if (res.ok) {
-        alert(isSignup ? "Signup successful!" : "Login successful!");
+        alert("Login successful!");
         console.log(data);
       } else {
-        alert(data.message || "Something went wrong.");
+        alert(data.message || "Login failed.");
       }
     } catch (err) {
       console.error(err);
@@ -47,26 +37,9 @@ export default function AuthPage() {
   return (
     <div style={styles.container}>
       <div style={styles.box}>
-        <h2 style={styles.heading}>
-          {isSignup ? "Create Account" : "Welcome Back"}
-        </h2>
+        <h2 style={styles.heading}>Welcome Back</h2>
 
         <form onSubmit={handleSubmit} style={styles.form}>
-          {isSignup && (
-            <>
-              <label style={styles.label}>Full Name</label>
-              <input
-                type="text"
-                name="name"
-                required
-                placeholder="John Doe"
-                value={formData.name}
-                onChange={handleChange}
-                style={styles.input}
-              />
-            </>
-          )}
-
           <label style={styles.label}>Email</label>
           <input
             type="email"
@@ -90,18 +63,15 @@ export default function AuthPage() {
           />
 
           <button type="submit" style={styles.button}>
-            {isSignup ? "Sign Up" : "Log In"}
+            Log In
           </button>
         </form>
 
         <p style={styles.loginText}>
-          {isSignup ? "Already have an account?" : "Don't have an account?"}{" "}
-          <span
-            onClick={() => setIsSignup(!isSignup)}
-            style={{ ...styles.link, cursor: "pointer" }}
-          >
-            {isSignup ? "Log in" : "Sign up"}
-          </span>
+          Don't have an account?{" "}
+          <a href="#" style={styles.link}>
+            Sign up
+          </a>
         </p>
       </div>
     </div>
